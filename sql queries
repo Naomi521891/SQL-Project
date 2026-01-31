@@ -1,0 +1,114 @@
+--Created my database
+create database NAOMI;
+--specifying which database name to use
+USE NAOMI;
+--Retriving all data from the table
+Select * from StudentPerformanceFactors;
+
+--selecting exam score that are less than 90 and sorting them by Descending order
+SELECT Exam_Score
+FROM StudentPerformanceFactors
+WHERE Exam_Score > 90
+order by Exam_Score DESC;
+
+--Displaying where Teacher quality is Medium
+SELECT Teacher_Quality
+FROM StudentPerformanceFactors 
+WHERE Teacher_Quality = 'Medium';
+
+--Diplaying the total of exam score using SUM
+SELECT SUM(Exam_score ) as Total_Score
+FROM StudentPerformanceFactors;
+
+--showing the Minimum, Average and Maximum of previous scores from StudentPerformanceFactors table
+SELECT avg(Previous_Scores) as Average,
+       MIN(Previous_Scores) as Minimum,
+	   MAX(Previous_Scores) as Maximun
+FROM StudentPerformanceFactors;
+
+--counts only rows where Previous_Scores has values 
+SELECT COUNT(Previous_Scores) as Total
+FROM StudentPerformanceFactors;
+--selecting previous score that are less than 80 and sorting them by Descending order
+select Previous_Scores, Exam_Score
+from StudentPerformanceFactors
+where Previous_Scores > 80
+order by Exam_Score DESC;
+
+--displaying where parental education level is null there are no values
+select Exam_Score, Peer_Influence, Parental_Involvement,Parental_Education_Level
+from StudentPerformanceFactors 
+where Parental_Education_Level is null;
+
+--joing one table using inner join to show how many student sleep and their motivation level
+select s.Sleep_Hours, sf.Motivation_Level, sf.Gender
+from StudentPerformanceFactors s
+inner join StudentPerformanceFactors sf
+on s.Hours_Studied = sf.Hours_Studied
+order by Sleep_Hours;
+
+--right join 
+SELECT  s.Family_Income, sf.Access_to_Resources, s.Tutoring_Sessions
+FROM StudentPerformanceFactors s right join StudentPerformanceFactors sf
+ON s.Hours_Studied <> sf.Hours_Studied 
+WHERE s.Exam_Score = sf.Exam_Score;
+
+--CASE displaying how students perfomed with their exam
+select Gender, Previous_Scores, Exam_Score,
+    CASE
+        WHEN Exam_Score BETWEEN  50 AND 59 then 'Oops almost'
+        WHEN Exam_Score BETWEEN  60 AND 75 then 'Pass'
+  ELSE 'Distinction'
+   END 
+  FROM StudentPerformanceFactors; 
+
+  --removing repeating data (numbers) 
+  SELECT DISTINCT Exam_Score 
+  from StudentPerformanceFactors
+  order by Exam_Score;
+
+--select statement showing how many student lack motivation
+  select Attendance, Exam_Score, Previous_Scores
+  from StudentPerformanceFactors
+  where Motivation_Level = 'low'
+  OR Attendance <  100;
+
+--Diplaying the total of female students and male student we have
+SELECT 
+    ISNULL(Gender, 'Null') AS Gender,
+    COUNT(*) AS Total
+FROM StudentPerformanceFactors
+GROUP BY ISNULL(Gender, 'Null');
+
+--Display total students per gender with previous score higher than 60
+SELECT Gender, COUNT(*) AS Total
+FROM StudentPerformanceFactors
+WHERE Previous_Scores > 60
+GROUP BY Gender;
+
+
+--Display total students per gender with exam score lower than 60
+SELECT Gender, COUNT(*) AS Total
+FROM StudentPerformanceFactors
+WHERE Exam_Score < 60
+GROUP BY Gender;
+
+--Displaying exam marks from minimum to maximum
+select Exam_Score from StudentPerformanceFactors
+where Exam_Score > (select MIN(Exam_Score)
+From StudentPerformanceFactors)
+ORDER BY Exam_Score;
+
+
+--Minimun,Average and Miximum exam score per gender
+SELECT Gender, min(Exam_Score) AS Min_Score
+FROM StudentPerformanceFactors
+GROUP BY Gender;
+
+SELECT Gender, avg(Exam_Score) AS Avg_Score
+FROM StudentPerformanceFactors
+GROUP BY Gender;
+
+SELECT Gender, max(Exam_Score) AS Max_Score
+FROM StudentPerformanceFactors
+GROUP BY Gender;
